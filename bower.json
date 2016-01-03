@@ -1,0 +1,25 @@
+{
+  "name": "webda-webcomponents",
+  "authors": [
+    "Remi Cattiau <rcattiau@gmail.com>"
+  ],
+  "description": "Polymer component to use with Webda API",
+  "main": "auth-oauth.html",
+  "moduleType": [
+    "es6"
+  ],
+  "keywords": [
+    "polymer",
+    "webda"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
