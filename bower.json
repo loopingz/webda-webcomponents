@@ -1,20 +1,27 @@
 {
   "name": "webda-webcomponents",
+  "dependencies": {
+    "polymer": "Polymer/polymer#master",
+    "core-icon": "Polymer/core-icon#master",
+    "core-icons": "Polymer/core-icons#master",
+    "core-input": "Polymer/core-input#master",
+    "core-style": "Polymer/core-style#master",
+    "js-md5": "~2.3.0"
+  },
+  "devDependencies": {
+    "web-component-tester": "Polymer/web-component-tester#^1.0.0"
+  },
   "authors": [
-    "Remi Cattiau <rcattiau@gmail.com>"
+    "Remi Cattiau <remi@cattiau.com>"
   ],
-  "description": "Polymer component to use with Webda API",
-  "main": "auth-oauth.html",
-  "moduleType": [
-    "es6"
-  ],
+  "description": "Polymer Webcomponents for Webda.io",
+  "main": "webda-core.html",
+  "moduleType": [],
   "keywords": [
-    "polymer",
-    "webda"
+    "Webda"
   ],
-  "license": "MIT",
-  "homepage": "",
-  "private": true,
+  "license": "LPGL",
+  "homepage": "webda.io",
   "ignore": [
     "**/.*",
     "node_modules",

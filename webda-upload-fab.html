@@ -1,11 +1,11 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="webda-core.html">
 <link rel="import" href="webda-upload-behavior.html">
-<dom-module id="webda-upload-input">
+<dom-module id="webda-upload-fab">
 <template>
 	<style is="custom-style" include="shared-styles"></style>
 	<style>
-		paper-button {
+		paper-fab {
 			background-color: var(--default-primary-color);
 			color: var(--text-primary-color);
 			float: right;
@@ -16,37 +16,22 @@
 		}
 	</style>
 	<input on-change="computeFile" id="file" type="file" style="width: 0px; height: 0px;"></input>
-	<paper-button on-tap="openFile">[[browseLabel]]</paper-button>
-	<paper-input label="[[label]]" placeholder="[[placeholder]]" value="[[filename]]" on-tap="openFile" readonly></paper-input>
+	<paper-fab icon="[[icon]]" on-tap="openFile"></paper-fab>
 </template>
 <script>
     (function() {
       'use strict';
       Polymer({
-        is: 'webda-upload-input',
+        is: 'webda-upload-fab',
         behaviors: [Webda.Behaviors.Upload],
         properties: {
-          label: {
+          icon: {
           	type: String,
-          	value: "Upload"
-          },
-          browseLabel: {
-          	type: String,
-          	value: "Browse"
-          },
-          placeholder: {
-          	type: String,
-          	value: "Choose a file"
+          	value: "cloud-upload"
           }
         },
         openFile: function(evt) {
         	this.$.file.click();
-        },
-        ready: function() {
-        },
-        setUrl: function(url) {
-          console.log('Set URL' + url);
-          Webda.setUrl(this.url);
         }
       });
     })();
