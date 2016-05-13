@@ -1,0 +1,80 @@
+<link rel="import" href="webda-core.html">
+<script>
+    Webda.Behaviors.Authentication = {
+
+      properties: {
+      	url: {
+      		type: String,
+      		value: "auth"
+      	},
+      	providers: {
+      		type: Array,
+      		value: []
+      	},
+      	dynamicProviders: {
+      		type: Boolean,
+      		value: true
+      	}
+      },
+
+      login: function(login, password) {
+	    Webda.ajax.method = 'POST';
+	    Webda.ajax.contentType = 'application/json';
+	    Webda.ajax.body = {'login': login, 'password': password};
+	    Webda.ajax.url = Webda.url(this.url + '/email');
+	    var req = Webda.ajax.generateRequest();
+	    return req.completes.then(() => {
+	      	app.fire('Webda.Login');
+	      	return Promise.resolve();
+	    }).catch(function (err) {
+	    	return Promise.reject(req.status);
+	    });
+      },
+
+      logout: function() {
+	    Webda.ajax.method = 'DELETE';
+	    Webda.ajax.url = Webda.url(this.url);
+	    return Webda.ajax.generateRequest().completes.then(() => {
+	      	app.fire('Webda.Logout');
+	    });
+      },
+      
+      ready: function() {
+      	if (this.dynamicProviders) {
+      		this.loadProviders();
+      	}
+      },
+
+      getOAuthProviders: function() {
+      	var res = [];;
+      	for (let i in this.providers) {
+      		if (this.providers[i] === 'email') continue;
+      		if (this.providers[i] === 'phone') continue;
+      		res.push(this.providers[i]);
+      	}
+      	return res;
+      },
+
+      loadProviders: function() {
+      	Webda.ajax.method = 'GET';
+      	Webda.ajax.url = Webda.url(this.url);
+	    Webda.ajax.generateRequest().completes.then((res) => {
+	      	this.providers = Webda.ajax.lastResponse;
+	    });
+      },
+
+      oauth: function(e) {
+      	var provider;
+      	if (typeof(e) === 'string') {
+      		provider = e;
+      	} else if (e && e.target) {
+      		provider = e.target.getAttribute('provider');
+      	}
+      	if (!provider) return;
+      	top.location = Webda.url(this.url + '/' + provider);
+      }
+      
+
+    };
+
+</script>

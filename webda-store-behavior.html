@@ -1,0 +1,68 @@
+<link rel="import" href="webda-core.html">
+<script>
+    Webda.Behaviors.Store = {
+
+      properties: {
+      	model: {
+      		type: Object,
+      		value: {}
+      	},
+      	uuid: {
+      		type: String,
+                  observer: 'get'
+      	},
+            store: {
+                  type: String
+            }
+      },
+
+      save: function() {
+            if (this.store === undefined) return;
+            var event = '';
+            if (this.model.uuid) {
+                  event = 'Webda.Store.Update';
+                  Webda.ajax.method = 'PUT';
+                  Webda.ajax.url = Webda.url(this.store.toLowerCase() + '/' + this.uuid);
+            } else {
+                  event = 'Webda.Store.Create';
+                  Webda.ajax.method = 'POST';
+                  Webda.ajax.url = Webda.url(this.store.toLowerCase());
+            }
+            Webda.ajax.contentType = 'application/json';
+            Webda.ajax.body = this.model;
+            var req = Webda.ajax.generateRequest();
+            return req.completes.then(() => {
+                  this.model = req.response;
+                  this.fire(event, this.model);
+                  return Promise.resolve();
+            });
+      },
+
+      ready: function() {
+            if (this.uuid && this.store) {
+                  this.get();
+            }
+      },
+
+      get: function() {
+            if (this.store === undefined || this.uuid === undefined) return;
+            Webda.ajax.method = 'GET';
+            Webda.ajax.url = Webda.url(this.store.toLowerCase() + '/' + this.uuid);
+            var req = Webda.ajax.generateRequest();
+            req.completes.then(() => {
+                  this.model = req.response;
+            });
+            return req;
+      },
+      
+      delete: function() {
+            if (this.store === undefined) return;
+            Webda.ajax.method = 'DELETE';
+            Webda.ajax.url = Webda.url(this.store.toLowerCase() + '/' + this.uuid);
+            return Webda.ajax.generateRequest().completes.then(() => {
+                  this.fire('Webda.Store.Delete', this.model);
+            });
+      }
+    };
+
+</script>

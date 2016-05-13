@@ -7,9 +7,9 @@ The complete set of contributors may be found at http://polymer.github.io/CONTRI
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
-<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="webda-authentication-behavior.html">
 
-<dom-module id="auth-oauth">
+<dom-module id="webda-oauth-buttons">
   <template>
     <style>
       :host {
@@ -21,20 +21,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       li {
         list-style: none;
       }
-      @media (max-width: 600px) {
-        li {
-          float: left;
-        }
+      li {
+        float: left;
       }
-      #google {
+      paper-button[provider=github] {
+        background-color: #000000;
+        color: #ffffff;
+      }
+      paper-button[provider=amazon] {
+        background-color: #ff9900;
+        color: #ffffff;
+      }
+      paper-button[provider=google] {
         background-color: #DD4B39;
         color: #ffffff;
       }
-      #facebook {
+      paper-button[provider=facebook] {
         background-color: #3b5998;
         color: #ffffff;
       }
-      #twitter {
+      paper-button[provider=twitter] {
         background-color: #4099FF;
         color: #ffffff;
       }
@@ -44,9 +50,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
     <ul>
-      <li><paper-button id="facebook">Facebook</paper-button></li>
-      <li><paper-button id="google">Google</paper-button></li>
-      <li><paper-button id="twitter">Twitter</paper-button></li>
+      <template is="dom-repeat" items="[[getOAuthProviders(providers)]]">
+          <li><paper-button provider$="[[item]]" on-click="oauth">[[getLabel(item)]]</paper-button></li>
+      </template>
     </ul>
   </template>
 
@@ -55,22 +61,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       'use strict';
   
       Polymer({
-        is: 'auth-oauth',
+        is: 'webda-oauth-buttons',
+        behaviors: [Webda.Behaviors.Authentication],
         properties: {
-          items: {
-            type: Array,
-            notify: true,
+          labels: {
+            type: Object,
+            value: {'facebook': 'Facebook', 'google': 'Google', 'github': 'GitHub', 'twitter': 'Twitter', 'amazon': 'Amazon'}
           }
         },
-        ready: function() {
-          this.items = [
-            'Responsive Web App boilerplate',
-            'Iron Elements and Paper Elements',
-            'End-to-end Build Tooling (including Vulcanize)',
-            'Unit testing with Web Component Tester',
-            'Routing with Page.js',
-            'Offline support with the Platinum Service Worker Elements'
-          ];
+        getLabel: function(provider) {
+          return this.labels[provider];
         }
       });
     })();

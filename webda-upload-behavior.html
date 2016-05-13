@@ -1,0 +1,83 @@
+<link rel="import" href="webda-core.html">
+<script src="../../bower_components/js-md5/build/md5.min.js"></script>
+<script>
+UploadBehavior = {
+	properties: {
+		store: {
+            type: String,
+            value: 'binary'
+        },
+        path: {
+          	type: String,
+          	value: 'tasks/efe449ab-5e0d-4f3c-97e2-b43d9fc50a85/images/add'
+        },
+        filename: {
+          	type: String,
+          	notify: true
+        },
+        autoupload: {
+        	type: Boolean,
+        	value: false
+        }
+	},
+	computeFile: function(evt) {
+		console.log("computeFile");
+    	this.loading = true;
+		var files = evt.target.files;
+		this.filename = files[0].name;
+		this.file = files[0];
+		this.hashPromise = new Promise( (resolve, reject) => {
+			var reader = new FileReader();
+			reader.onload = (event) => {
+				var binary = new Uint8Array(event.target.result);
+		    	this.hash = md5(binary);
+		    	// TODO Optimize could update sha256 algo to handle dual calculation
+		    	var challengeBinary = new Uint8Array(5 + binary.length);
+		    	challengeBinary.set(new Uint8Array([87, 69, 66, 68, 65]));
+		    	challengeBinary.set(binary, 5);
+		    	this.challenge = md5(challengeBinary);
+		    	resolve();
+			}
+			reader.readAsArrayBuffer(files[0]);
+		});
+		if (this.autoupload) {
+			this.hashPromise.then( () => {
+				this.upload();
+			});
+		}
+		return false;
+	},
+	upload: function() {
+		if (this.hashPromise === undefined) {
+			throw Error("Please select a file");
+		}
+		return this.hashPromise.then( () => {
+			// URL
+			let url = this.store + "/upload/" + this.path;
+			Webda.ajax.url = Webda.url(url);
+			Webda.ajax.method = "PUT";
+			Webda.ajax.contentType = 'application/json';
+			Webda.ajax.body = {hash: this.hash, 'challenge': this.challenge, originalname: this.file.name, size: this.file.size, mimetype: this.file.type, metadatas: {}};
+          	return Webda.ajax.generateRequest().completes.then((evt) => {
+          		if (!Webda.ajax.lastResponse.done) {
+          			if (!Webda.ajax.lastResponse.url) {
+          				return Promise.reject("No url return and no ACK");
+          			}
+          			// Need to upload the file
+          			Webda.ajaxAnon.method = "PUT";
+          			Webda.ajaxAnon.body = this.file;
+          			Webda.ajaxAnon.contentType = 'application/octet-stream';
+          			Webda.ajaxAnon.headers['Content-MD5'] = Webda.ajax.lastResponse.md5;
+          			Webda.ajaxAnon.url = Webda.ajax.lastResponse.url;
+          			return Webda.ajaxAnon.generateRequest().completes.then( () => {
+          				this.fire("Webda.Upload");
+          			});
+          		}
+          		// File was already on server, the adding has been done
+          		return Promise.resolve();
+          	});
+        });
+	}
+}
+Webda.Behaviors.Upload = UploadBehavior;
+</script>

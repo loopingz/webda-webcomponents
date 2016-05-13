@@ -8,8 +8,8 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-
-<dom-module id="auth-email">
+<link rel="import" href="webda-authentication-behavior.html">
+<dom-module id="webda-auth-email-panel">
   <template>
     <style include="shared-styles"></style>
     <style>
@@ -23,17 +23,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       paper-button.primary {
         margin-top: 30px;
+        background-color: var(--default-primary-color);
+        color: var(--text-primary-color);
         float: right;
+      }
+      .error {
+        color: #db4437;
       }
     </style>
     <div>
-    <paper-input class="short" label="Enter your email here" id="inputWithButton" auto-validate pattern="[a-zA-Z0-9]+@[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}">
+    <paper-input class="short" label="Enter your email here" value={{email}} auto-validate pattern="[a-zA-Z0-9]+@[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}">
       <iron-icon icon="mail" prefix></iron-icon>
     </paper-input>
-    <paper-input label="Enter your password here" type="password" auto-validate pattern=".{8,}">
+    <paper-input label="Enter your password here" value="{{password}}" type="password" auto-validate pattern=".{8,}">
       <iron-icon icon="lock" prefix></iron-icon>
     </paper-input>
-    <paper-button class="primary">Login</paper-button>
+    <span class="error">[[lastError]]</span>
+    <paper-button class="primary" on-click="log">Login</paper-button>
     </div>
   </template>
 
@@ -42,14 +48,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       'use strict';
       
       Polymer({
-        is: 'auth-email',
-
-        properties: {
-          greeting: {
-            type: String,
-            value: 'Welcome!',
-            notify: true
-          }
+        is: 'webda-auth-email-panel',
+        behaviors: [Webda.Behaviors.Authentication],
+        log: function() {
+          this.login(this.email, this.password).catch((err) => {
+            if (err == 403) {
+              this.lastError = "Incorrect password";
+            } else if (err == 404) {
+              this.fire("Webda.Auth.NeedRegistration", {'email': this.email, password: this.password});
+            } else {
+              this.lastError = "Unknown error occured";
+            }
+          });
         }
       });
     })();
