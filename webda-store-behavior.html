@@ -30,9 +30,7 @@
             }
             Webda.ajax.contentType = 'application/json';
             Webda.ajax.body = this.model;
-            var req = Webda.ajax.generateRequest();
-            return req.completes.then(() => {
-                  this.model = req.response;
+            return Webda.ajax.generateRequest().completes.then((req) => {
                   this.fire(event, this.model);
                   return Promise.resolve();
             });

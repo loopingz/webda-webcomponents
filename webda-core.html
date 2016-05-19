@@ -8,7 +8,7 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 <dom-module id="webda-core">
   <template>
     <iron-ajax id="ajax" handle-as="json" with-credentials="true"></iron-ajax>
@@ -55,12 +55,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           url: {
             type: String,
             observer: 'setUrl'
+          },
+          autoMe: {
+            type: Object,
+            notify: true
           }
         },
         ready: function() {
           Webda.ajax = this.$.ajax;
           Webda.ajaxAnon = this.$.ajaxAnon;
+          console.log("Webda is ready");
           Webda.setUrl(this.url);
+          if (this.autoMe) {
+            Webda.ajax.url = Webda.url('auth/me');
+            Webda.ajax.generateRequest().completes.then( (req) => {
+              let user = req.response;
+              Webda.user = user;
+              this.autoMe = user;
+              this.fire("Webda.Login", user);
+            });
+          }
         },
         setUrl: function(url) {
           Webda.setUrl(this.url);

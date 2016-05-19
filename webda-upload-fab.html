@@ -3,20 +3,20 @@
 <link rel="import" href="webda-upload-behavior.html">
 <dom-module id="webda-upload-fab">
 <template>
-	<style is="custom-style" include="shared-styles"></style>
-	<style>
-		paper-fab {
-			background-color: var(--default-primary-color);
-			color: var(--text-primary-color);
-			float: right;
-		}
-		paper-input {
-			margin-top: -10px;
-			margin-right: 6px;
-		}
-	</style>
-	<input on-change="computeFile" id="file" type="file" style="width: 0px; height: 0px;"></input>
-	<paper-fab icon="[[icon]]" on-tap="openFile"></paper-fab>
+  <style is="custom-style" include="shared-styles"></style>
+  <style>
+    paper-fab {
+      background-color: var(--default-primary-color);
+      color: var(--text-primary-color);
+      float: right;
+    }
+    paper-input {
+      margin-top: -10px;
+      margin-right: 6px;
+    }
+  </style>
+  <input on-change="computeFile" id="file" type="file" style="width: 0px; height: 0px;"></input>
+  <paper-fab mini="[[mini]]" icon="[[icon]]" on-tap="openFile"></paper-fab>
 </template>
 <script>
     (function() {
@@ -26,12 +26,16 @@
         behaviors: [Webda.Behaviors.Upload],
         properties: {
           icon: {
-          	type: String,
-          	value: "cloud-upload"
+            type: String,
+            value: "cloud-upload"
+          },
+          mini: {
+            type: Boolean,
+            value: false
           }
         },
         openFile: function(evt) {
-        	this.$.file.click();
+          this.$.file.click();
         }
       });
     })();
