@@ -22,7 +22,7 @@
             if (this.model.uuid) {
                   event = 'Webda.Store.Update';
                   Webda.ajax.method = 'PUT';
-                  Webda.ajax.url = Webda.url(this.store.toLowerCase() + '/' + this.uuid);
+                  Webda.ajax.url = Webda.url(this.store.toLowerCase() + '/' + this.model.uuid);
             } else {
                   event = 'Webda.Store.Create';
                   Webda.ajax.method = 'POST';
@@ -55,12 +55,13 @@
       
       delete: function() {
             if (this.store === undefined) return;
-            if (this.uuid === undefined) {
-                  this.fire('Webda.Store.Delete', this.model);
-                  return;
+            var uuid = this.uuid;
+            if (uuid === undefined) {
+                uuid = this.model.uuid;  
             }
+            if (uuid === undefined) return;
             Webda.ajax.method = 'DELETE';
-            Webda.ajax.url = Webda.url(this.store.toLowerCase() + '/' + this.uuid);
+            Webda.ajax.url = Webda.url(this.store.toLowerCase() + '/' + uuid);
             return Webda.ajax.generateRequest().completes.then(() => {
                   this.fire('Webda.Store.Delete', this.model);
             });
