@@ -18,6 +18,10 @@ UploadBehavior = {
         autoupload: {
         	type: Boolean,
         	value: false
+        },
+        b64content: {
+        	type: String,
+        	notify: true
         }
 	},
 	computeFile: function(evt) {
@@ -38,6 +42,14 @@ UploadBehavior = {
 		    	resolve();
 			}
 			reader.readAsArrayBuffer(files[0]);
+			if (this.b64content) {
+				// Would prefer to optimise with the other reader
+				var b64reader = new FileReader();
+				b64reader.onload = (event) => {
+					this.b64content = event.target.result;
+				};
+				b64reader.readAsDataURL(files[0]);
+			}
 		});
 		if (this.autoupload) {
 			this.hashPromise.then( () => {

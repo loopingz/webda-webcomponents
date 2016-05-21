@@ -38,6 +38,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     this._url = url;
   };
 
+  WebdaController.prototype.logout = function(url) {
+    if (url === undefined) {
+      url = "auth";
+    }
+    Webda.ajax.method = 'DELETE';
+    Webda.ajax.url = Webda.url(url);
+    return Webda.ajax.generateRequest().completes.then(() => {
+        app.fire('Webda.Logout');
+    });
+  };
+
   WebdaController.prototype.url = function(page) {
     return this._url + page;
   };

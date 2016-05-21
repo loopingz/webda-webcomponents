@@ -17,6 +17,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <style>
       :host {
         display: block;
+        min-height: 200px;
       }
       paper-input iron-icon {
         color: var(--default-primary-color);
@@ -34,14 +35,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
     <div>
-    <paper-input class="short" label="Enter your email here" value={{email}} auto-validate pattern="[a-zA-Z0-9]+@[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}">
-      <iron-icon icon="mail" prefix></iron-icon>
-    </paper-input>
-    <paper-input label="Enter your password here" value="{{password}}" type="password" auto-validate pattern=".{8,}">
-      <iron-icon icon="lock" prefix></iron-icon>
-    </paper-input>
-    <span class="error">[[lastError]]</span>
-    <paper-button class="primary" on-click="log">Login</paper-button>
+      <paper-input class="short" label="Enter your email here" value={{email}} auto-validate pattern="[a-zA-Z0-9]+@[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}">
+        <iron-icon icon="mail" prefix></iron-icon>
+      </paper-input>
+      <paper-input label="Enter your password here" value="{{password}}" type="password" auto-validate pattern=".{8,}">
+        <iron-icon icon="lock" prefix></iron-icon>
+      </paper-input>
+      <span class="error">[[lastError]]</span>
+      <paper-button class="primary" on-click="log">Login</paper-button>
+    </div>
     <paper-dialog modal id="registerDialog" style="padding: 20px;">
       <h4>
       This email is not known on the system, do you want create an account ?
@@ -50,7 +52,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <paper-input label="Confirm your password here" value="{{confirmPassword}}" type="password" auto-validate pattern="[[password]]"></paper-input>
       <paper-button class="primary" on-click="registerAction">Register</paper-button>
     </paper-dialog>
-    </div>
   </template>
 
   <script>
@@ -68,8 +69,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
         registerAction: function() {
           this.register(this.email, this.password, {}).then( () => {
-            this.$.registerDialog.close();
-            this.fire("Webda.Login");
+
           });
         },
         log: function() {

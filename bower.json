@@ -6,7 +6,7 @@
     "core-icons": "Polymer/core-icons#master",
     "core-input": "Polymer/core-input#master",
     "core-style": "Polymer/core-style#master",
-    "js-md5": "~2.3.0"
+    "js-md5": "md5#~0.4.1"
   },
   "devDependencies": {
     "web-component-tester": "Polymer/web-component-tester#^1.0.0"
