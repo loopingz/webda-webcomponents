@@ -19,11 +19,13 @@
       save: function() {
             if (this.store === undefined) return;
             var event = '';
+            var create = false;
             if (this.model.uuid) {
                   event = 'Webda.Store.Update';
                   Webda.ajax.method = 'PUT';
                   Webda.ajax.url = Webda.url(this.store.toLowerCase() + '/' + this.model.uuid);
             } else {
+                  create = true;
                   event = 'Webda.Store.Create';
                   Webda.ajax.method = 'POST';
                   Webda.ajax.url = Webda.url(this.store.toLowerCase());
@@ -31,6 +33,9 @@
             Webda.ajax.contentType = 'application/json';
             Webda.ajax.body = this.model;
             return Webda.ajax.generateRequest().completes.then((req) => {
+                  if (create) {
+                        this.model = req.response;
+                  }
                   this.fire(event, this.model);
                   return Promise.resolve();
             });
