@@ -83,7 +83,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               let user = req.response;
               Webda.user = user;
               this.autoMe = user;
-              this.fire("Webda.Login", user);
+              this.fire("Webda.AutoLogin", user);
             });
           }
         },
