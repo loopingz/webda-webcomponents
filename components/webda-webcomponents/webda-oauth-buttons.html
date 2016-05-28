@@ -1,0 +1,84 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="webda-authentication-behavior.html">
+<link rel="import" href="../paper-button/paper-button.html">
+
+<dom-module id="webda-oauth-buttons">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      ul {
+        -webkit-padding-start: 0px;
+      }
+      li {
+        list-style: none;
+      }
+      paper-button[provider=github] {
+        background-color: #000000;
+        color: #ffffff;
+      }
+      paper-button[provider=amazon] {
+        background-color: #ff9900;
+        color: #ffffff;
+      }
+      paper-button[provider=google] {
+        background-color: #DD4B39;
+        color: #ffffff;
+      }
+      paper-button[provider=facebook] {
+        background-color: #3b5998;
+        color: #ffffff;
+      }
+      paper-button[provider=twitter] {
+        background-color: #4099FF;
+        color: #ffffff;
+      }
+      paper-button {
+        width: 120px;
+        margin: 5px;
+      }
+    </style>
+    <ul>
+      <template is="dom-repeat" items="[[getOAuthProviders(providers)]]">
+          <li><paper-button provider$="[[item]]" on-click="oauth">[[_getLabel(item)]]</paper-button></li>
+      </template>
+    </ul>
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+      /**
+       * Display all the buttons for OAuth with the providers enabled
+       * @demo demo/webda-oauth-buttons.html
+       */
+      Polymer({
+        is: 'webda-oauth-buttons',
+        behaviors: [Webda.Behaviors.Authentication],
+        properties: {
+          /**
+           * Labels to use for a provider, map {'facebook': 'Connect with FB'} if not found then a label for provider will be Provider
+           */
+          labels: {
+            type: Object
+          }
+        },
+        _getLabel: function(provider) {
+          if (this.labels && this.labels[provider]) {
+            return this.labels[provider];
+          }
+          return provider.charAt(0).toUpperCase() + provider.slice(1);
+        }
+      });
+    })();
+  </script>
+</dom-module>

@@ -1,0 +1,49 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="webda-core.html">
+<link rel="import" href="webda-upload-behavior.html">
+<link rel="import" href="../paper-fab/paper-fab.html">
+<dom-module id="webda-upload-fab">
+<template>
+	<style is="custom-style" include="shared-styles"></style>
+	<style>
+		paper-fab {
+			background-color: var(--default-primary-color);
+			color: var(--text-primary-color);
+		}
+	</style>
+	<input on-change="_computeFile" id="file" type="file" style="width: 0px; height: 0px;"></input>
+	<paper-fab mini="[[mini]]" icon="[[icon]]" on-tap="_openFile"></paper-fab>
+</template>
+<script>
+    (function() {
+      'use strict';
+      /**
+       * Display a paper-fab to choose a file to upload
+       * @demo demo/webda-upload-fab.html
+       */
+      Polymer({
+        is: 'webda-upload-fab',
+        behaviors: [Webda.Behaviors.Upload],
+        properties: {
+          /**
+           * Icon to use for paper-fab
+           */
+          icon: {
+          	type: String,
+          	value: "cloud-upload"
+          },
+          /**
+           * Use mini for paper-fab
+           */
+          mini: {
+            type: Boolean,
+            value: false
+          }
+        },
+        _openFile: function(evt) {
+        	this.$.file.click();
+        }
+      });
+    })();
+</script>
+</dom-module>

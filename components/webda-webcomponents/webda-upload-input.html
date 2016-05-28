@@ -1,0 +1,64 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="webda-core.html">
+<link rel="import" href="webda-upload-behavior.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<dom-module id="webda-upload-input">
+<template>
+	<style is="custom-style" include="shared-styles"></style>
+	<style>
+		paper-button {
+			background-color: var(--default-primary-color);
+			color: var(--text-primary-color);
+			float: right;
+		}
+		paper-input {
+			margin-top: -10px;
+			margin-right: 6px;
+		}
+	</style>
+	<input on-change="_computeFile" id="file" type="file" style="width: 0px; height: 0px;"></input>
+	<paper-button on-tap="_openFile">[[browseLabel]]</paper-button>
+	<paper-input label="[[label]]" placeholder="[[placeholder]]" value="[[filename]]" on-tap="_openFile" readonly></paper-input>
+</template>
+<script>
+    (function() {
+      'use strict';
+      /**
+       * Display an paper-input with a paper-button for browse
+       * The paper-input is in readonly
+       * @demo demo/webda-upload-input.html
+       */
+      Polymer({
+        is: 'webda-upload-input',
+        behaviors: [Webda.Behaviors.Upload],
+        properties: {
+          /**
+           * Label to use for paper-input
+           */
+          label: {
+          	type: String,
+          	value: "Upload"
+          },
+          /**
+           * Label to use for paper-button browse
+           */
+          browseLabel: {
+          	type: String,
+          	value: "Browse"
+          },
+          /**
+           * Placeholder for paper-input
+           */
+          placeholder: {
+          	type: String,
+          	value: "Choose a file"
+          }
+        },
+        _openFile: function(evt) {
+        	this.$.file.click();
+        }
+      });
+    })();
+</script>
+</dom-module>

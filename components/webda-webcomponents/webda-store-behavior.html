@@ -1,0 +1,99 @@
+<link rel="import" href="webda-core.html">
+<script>
+/**
+ * Handles the REST API for a Store
+ *
+ * Allowing to save/delete/get an object without effort
+ * See http://webda.io/#!/store
+ * @polymerBehavior
+ */
+    Webda.Behaviors.Store = {
+
+      properties: {
+            /**
+             * Remote object representation
+             */
+      	model: {
+      		type: Object,
+      		value: {}
+      	},
+            /**
+             * Object unique id, it is used to load from the server if model is not defined
+             */
+      	uuid: {
+      		type: String,
+                  observer: 'get'
+      	},
+            /**
+             * Store mapping on your API
+             */
+            store: {
+                  type: String
+            }
+      },
+      /**
+       * Create or update the current model on the server, depending if model.uuid is null
+       */
+      save: function() {
+            if (this.store === undefined) return;
+            var event = '';
+            var create = false;
+            if (this.model.uuid) {
+                  event = 'Webda.Store.Update';
+                  Webda.ajax.method = 'PUT';
+                  Webda.ajax.url = Webda.url(this.store.toLowerCase() + '/' + this.model.uuid);
+            } else {
+                  create = true;
+                  event = 'Webda.Store.Create';
+                  Webda.ajax.method = 'POST';
+                  Webda.ajax.url = Webda.url(this.store.toLowerCase());
+            }
+            Webda.ajax.contentType = 'application/json';
+            Webda.ajax.body = this.model;
+            return Webda.ajax.generateRequest().completes.then((req) => {
+                  if (create) {
+                        this.model = req.response;
+                  }
+                  this.fire(event, this.model);
+                  return Promise.resolve();
+            });
+      },
+
+      ready: function() {
+            if (this.uuid && this.store) {
+                  this.get();
+            }
+      },
+      /**
+       * Retrieve the object from the server based on the uuid
+       */
+      get: function() {
+            if (this.store === undefined || this.uuid === undefined || this._promise) return;
+            Webda.ajax.method = 'GET';
+            Webda.ajax.url = Webda.url(this.store.toLowerCase() + '/' + this.uuid);
+            this._promise = Webda.ajax.generateRequest().completes.then((req) => {
+                  this.model = req.response;
+                  this._promise = undefined;
+            });
+            return this._promise;
+      },
+      
+      /**
+       * Delete the object on the server
+       */
+      delete: function() {
+            if (this.store === undefined) return;
+            var uuid = this.uuid;
+            if (uuid === undefined) {
+                uuid = this.model.uuid;  
+            }
+            if (uuid === undefined) return;
+            Webda.ajax.method = 'DELETE';
+            Webda.ajax.url = Webda.url(this.store.toLowerCase() + '/' + uuid);
+            return Webda.ajax.generateRequest().completes.then(() => {
+                  this.fire('Webda.Store.Delete', this.model);
+            });
+      }
+    };
+
+</script>

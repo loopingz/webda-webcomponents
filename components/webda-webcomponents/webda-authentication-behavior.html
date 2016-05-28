@@ -1,0 +1,125 @@
+<link rel="import" href="webda-core.html">
+<script>
+/**
+ * Handles the Authentication
+ *
+ * See http://webda.io/#!/authentication
+ * @polymerBehavior
+ */
+    Webda.Behaviors.Authentication = {
+
+      properties: {
+        /**
+         * URL to Authentication service
+         */
+      	url: {
+      		type: String,
+      		value: "auth"
+      	},
+        /** 
+         * Providers available for your API
+         */
+      	providers: {
+      		type: Array,
+      		value: []
+      	},
+        /**
+         * If true, retrieve the available providers with a request, it is better to define the providers for optimisation
+         */
+      	dynamicProviders: {
+      		type: Boolean,
+      		value: false
+      	}
+      },
+
+      /** 
+       * Login to Authentication service with a login/password, the email authentication must be enable on the API
+       */
+      login: function(login, password) {
+  	    Webda.ajax.method = 'POST';
+  	    Webda.ajax.contentType = 'application/json';
+  	    Webda.ajax.body = {'login': login, 'password': password};
+  	    Webda.ajax.url = Webda.url(this.url + '/email');
+  	    var req = Webda.ajax.generateRequest();
+  	    return req.completes.then(() => {
+  	      	app.fire('Webda.Login');
+  	      	return Promise.resolve();
+  	    }).catch(function (err) {
+  	    	return Promise.reject(req.status);
+  	    });
+      },
+
+      /**
+       * Register a new user, infos is a map of properties to add to the new user
+       */
+      register: function(login, password, infos) {
+          Webda.ajax.method = 'POST';
+          Webda.ajax.contentType = 'application/json';
+          if (infos === undefined) {
+            infos = {};
+          }
+          infos['login']=login;
+          infos['password']=password;
+          infos['register']=true;
+          Webda.ajax.body = infos;
+          Webda.ajax.url = Webda.url(this.url + '/email');
+          var req = Webda.ajax.generateRequest();
+          return req.completes.then(() => {
+            app.fire('Webda.Login');
+            return Promise.resolve();
+          }).catch(function (err) {
+            return Promise.reject(req.status);
+          });
+      },
+      /**
+       * Logout from the Webda.io API
+       */
+      logout: function() {
+	     Webda.logout(this.url);
+      },
+      
+      ready: function() {
+      	if (this.dynamicProviders) {
+      		this._loadProviders();
+      	}
+      },
+      /**
+       * Return the OAuth providers only filter email and phone
+       */
+      getOAuthProviders: function() {
+      	var res = [];;
+      	for (let i in this.providers) {
+      		if (this.providers[i] === 'email') continue;
+      		if (this.providers[i] === 'phone') continue;
+      		res.push(this.providers[i]);
+      	}
+      	return res;
+      },
+
+      _loadProviders: function() {
+      	Webda.ajax.method = 'GET';
+      	Webda.ajax.url = Webda.url(this.url);
+  	    Webda.ajax.generateRequest().completes.then((res) => {
+  	      	this.providers = Webda.ajax.lastResponse;
+  	    });
+      },
+
+      /** 
+       * Try to OAuth with the provider specified in argument
+       * Or if e is an event, check target attribute provider content for provider name
+       */ 
+      oauth: function(e) {
+      	var provider;
+      	if (typeof(e) === 'string') {
+      		provider = e;
+      	} else if (e && e.target) {
+      		provider = e.target.getAttribute('provider');
+      	}
+      	if (!provider) return;
+      	top.location = Webda.url(this.url + '/' + provider);
+      }
+      
+
+    };
+
+</script>

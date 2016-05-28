@@ -1,0 +1,124 @@
+<link rel="import" href="webda-core.html">
+<script src="../js-md5/build/md5.min.js"></script>
+<script>
+/**
+ * Handles the upload to a Binary
+ *
+ * It handles for you, the two steps upload to Webda.io API
+ * The upload is based on a prior challenge base on MD5 on the content and a challenge MD5('WEBDA'+filebinary)
+ * So if the file is already on the server you don't have to reupload it again
+ * @polymerBehavior
+ */
+Webda.Behaviors.Upload = {
+	properties: {
+		/**
+		 * Binary service name
+		 */
+		store: {
+            type: String,
+            value: 'binary'
+        },
+        /**
+         * Path for post
+         *
+         * Should be : objectStore/objectUid/objectProperty/index
+         *
+         * index is add for new file
+         *
+         * Example: tasks/efe449ab-5e0d-4f3c-97e2-b43d9fc50a85/images/add
+         */
+        path: {
+          	type: String
+        },
+        /**
+         * Filename of the selected file
+         */
+        filename: {
+          	type: String,
+          	notify: true
+        },
+        /**
+         * If true upload as soon as a file is selected
+         */
+        autoupload: {
+        	type: Boolean,
+        	value: false
+        },
+        /**
+         * File content in base64 to use inside a img tag, for preview
+         */
+        b64content: {
+        	type: String,
+        	notify: true
+        }
+	},
+	_computeFile: function(evt) {
+    	this.loading = true;
+		var files = evt.target.files;
+		this.filename = files[0].name;
+		this.file = files[0];
+		this.hashPromise = new Promise( (resolve, reject) => {
+			var reader = new FileReader();
+			reader.onload = (event) => {
+				var binary = new Uint8Array(event.target.result);
+		    	this.hash = md5(binary);
+		    	// TODO Optimize could update sha256 algo to handle dual calculation
+		    	var challengeBinary = new Uint8Array(5 + binary.length);
+		    	challengeBinary.set(new Uint8Array([87, 69, 66, 68, 65]));
+		    	challengeBinary.set(binary, 5);
+		    	this.challenge = md5(challengeBinary);
+		    	resolve();
+			}
+			reader.readAsArrayBuffer(files[0]);
+			if (this.b64content) {
+				// Would prefer to optimise with the other reader
+				var b64reader = new FileReader();
+				b64reader.onload = (event) => {
+					this.b64content = event.target.result;
+				};
+				b64reader.readAsDataURL(files[0]);
+			}
+		});
+		if (this.autoupload) {
+			this.hashPromise.then( () => {
+				this.upload();
+			});
+		}
+		return false;
+	},
+	/**
+	 * Launch the upload of the selected file
+	 */
+	upload: function() {
+		if (this.hashPromise === undefined) {
+			throw Error("Please select a file");
+		}
+		return this.hashPromise.then( () => {
+			// URL
+			let url = this.store + "/upload/" + this.path;
+			Webda.ajax.url = Webda.url(url);
+			Webda.ajax.method = "PUT";
+			Webda.ajax.contentType = 'application/json';
+			Webda.ajax.body = {hash: this.hash, 'challenge': this.challenge, originalname: this.file.name, size: this.file.size, mimetype: this.file.type, metadatas: {}};
+          	return Webda.ajax.generateRequest().completes.then((evt) => {
+          		if (!Webda.ajax.lastResponse.done) {
+          			if (!Webda.ajax.lastResponse.url) {
+          				return Promise.reject("No url return and no ACK");
+          			}
+          			// Need to upload the file
+          			Webda.ajaxAnon.method = "PUT";
+          			Webda.ajaxAnon.body = this.file;
+          			Webda.ajaxAnon.contentType = 'application/octet-stream';
+          			Webda.ajaxAnon.headers['Content-MD5'] = Webda.ajax.lastResponse.md5;
+          			Webda.ajaxAnon.url = Webda.ajax.lastResponse.url;
+          			return Webda.ajaxAnon.generateRequest().completes.then( () => {
+          				this.fire("Webda.Upload");
+          			});
+          		}
+          		// File was already on server, the adding has been done
+          		return Promise.resolve();
+          	});
+        });
+	}
+}
+</script>
