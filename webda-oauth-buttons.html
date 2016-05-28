@@ -8,6 +8,7 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 <link rel="import" href="webda-authentication-behavior.html">
+<link rel="import" href="../paper-button/paper-button.html">
 
 <dom-module id="webda-oauth-buttons">
   <template>
@@ -20,9 +21,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
       li {
         list-style: none;
-      }
-      li {
-        float: left;
       }
       paper-button[provider=github] {
         background-color: #000000;
@@ -51,7 +49,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </style>
     <ul>
       <template is="dom-repeat" items="[[getOAuthProviders(providers)]]">
-          <li><paper-button provider$="[[item]]" on-click="oauth">[[getLabel(item)]]</paper-button></li>
+          <li><paper-button provider$="[[item]]" on-click="oauth">[[_getLabel(item)]]</paper-button></li>
       </template>
     </ul>
   </template>
@@ -59,18 +57,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <script>
     (function() {
       'use strict';
-  
+      /**
+       * Display all the buttons for OAuth with the providers enabled
+       * @demo demo/webda-oauth-buttons.html
+       */
       Polymer({
         is: 'webda-oauth-buttons',
         behaviors: [Webda.Behaviors.Authentication],
         properties: {
+          /**
+           * Labels to use for a provider, map {'facebook': 'Connect with FB'} if not found then a label for provider will be Provider
+           */
           labels: {
-            type: Object,
-            value: {'facebook': 'Facebook', 'google': 'Google', 'github': 'GitHub', 'twitter': 'Twitter', 'amazon': 'Amazon'}
+            type: Object
           }
         },
-        getLabel: function(provider) {
-          return this.labels[provider];
+        _getLabel: function(provider) {
+          if (this.labels && this.labels[provider]) {
+            return this.labels[provider];
+          }
+          return provider.charAt(0).toUpperCase() + provider.slice(1);
         }
       });
     })();

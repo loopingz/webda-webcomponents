@@ -7,9 +7,10 @@ The complete set of contributors may be found at http://polymer.github.io/CONTRI
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
-<link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-dialog/paper-dialog.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-input/paper-input.html">
 <link rel="import" href="webda-authentication-behavior.html">
 <dom-module id="webda-auth-email-panel">
   <template>
@@ -42,7 +43,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <iron-icon icon="lock" prefix></iron-icon>
       </paper-input>
       <span class="error">[[lastError]]</span>
-      <paper-button class="primary" on-click="log">Login</paper-button>
+      <paper-button class="primary" on-click="_login">Login</paper-button>
     </div>
     <paper-dialog modal id="registerDialog" style="padding: 20px;">
       <h4>
@@ -50,29 +51,38 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </h4>
       <paper-input class="short" label="Confirm your email here" value={{confirmEmail}} auto-validate pattern="[[email]]"></paper-input>
       <paper-input label="Confirm your password here" value="{{confirmPassword}}" type="password" auto-validate pattern="[[password]]"></paper-input>
-      <paper-button class="primary" on-click="registerAction">Register</paper-button>
+      <paper-button class="primary" on-click="_registerAction">Register</paper-button>
     </paper-dialog>
   </template>
 
   <script>
     (function() {
       'use strict';
-      
+      /**
+       * Display a simple login/password form
+       *
+       * If handleRegister is true, if the user is unknown (404 from API), then open a paper-dialog box to register with
+       * just email/password confirmation, otherwise it emit a Webda.Auth.NeedRegistration so you can implement the behavior you want
+       * @demo demo/webda-auth-email-panel.html
+       */
       Polymer({
         is: 'webda-auth-email-panel',
         behaviors: [Webda.Behaviors.Authentication],
         properties: {
+          /**
+           * If you want this component to handle the registration also
+           */
           handleRegister: {
             type: Boolean,
-            value: true
+            value: false
           }
         },
-        registerAction: function() {
+        _registerAction: function() {
           this.register(this.email, this.password, {}).then( () => {
 
           });
         },
-        log: function() {
+        _login: function() {
           this.login(this.email, this.password).catch((err) => {
             if (err == 403) {
               this.lastError = "Incorrect password";

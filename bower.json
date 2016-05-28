@@ -1,21 +1,23 @@
 {
   "name": "webda-webcomponents",
+  "description": "Basic components for Webda.io framework",
+  "main": "webda-core.html",
   "dependencies": {
-    "polymer": "Polymer/polymer#master",
-    "core-icon": "Polymer/core-icon#master",
-    "core-icons": "Polymer/core-icons#master",
-    "core-input": "Polymer/core-input#master",
-    "core-style": "Polymer/core-style#master",
-    "js-md5": "md5#~0.4.1"
-  },
-  "devDependencies": {
-    "web-component-tester": "Polymer/web-component-tester#^1.0.0"
+    "polymer": "Polymer/polymer#^1.4.0",
+    "js-md5": "md5#~0.4.1",
+    "paper-dialog": "~1.0.4",
+    "paper-input": "~1.1.11",
+    "paper-fab": "~1.2.0"
   },
   "authors": [
     "Remi Cattiau <remi@cattiau.com>"
   ],
-  "description": "Polymer Webcomponents for Webda.io",
-  "main": "webda-core.html",
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.0.0",
+    "web-component-tester": "^4.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0"
+  },
   "moduleType": [],
   "keywords": [
     "Webda"

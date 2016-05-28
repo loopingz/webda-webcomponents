@@ -7,8 +7,8 @@ The complete set of contributors may be found at http://polymer.github.io/CONTRI
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
-<link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-ajax/iron-ajax.html">
 <dom-module id="webda-core">
   <template>
     <iron-ajax id="ajax" handle-as="json" with-credentials="true"></iron-ajax>
@@ -24,8 +24,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     if (this._url !== undefined && url === undefined) {
       return;
     }
-    if (url === undefined) {
-      url = app.baseUrl;
+    if (url === undefined && window.app) {
+      url = window.app.baseUrl;
     }
     if (url === undefined) {
       return;
@@ -60,13 +60,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <script>
     (function() {
       'use strict';
+      /**
+       * Main component to setup the root url for any Webda behavior
+       * This file also define a global variable Webda which is used by the framework component
+       */
       Polymer({
         is: 'webda-core',
         properties: {
+          /**
+           * URL of your Webda.io API
+           */
           url: {
             type: String,
-            observer: 'setUrl'
+            observer: '_setUrl'
           },
+          /**
+           * Try to retrieve the user for you
+           *
+           * Will call url/auth/me
+           */
           autoMe: {
             type: Object,
             notify: true
@@ -75,7 +87,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         ready: function() {
           Webda.ajax = this.$.ajax;
           Webda.ajaxAnon = this.$.ajaxAnon;
-          console.log("Webda is ready");
+          console.log("Webda is ready", Webda.ajax, Webda.ajaxAnon);
           Webda.setUrl(this.url);
           if (this.autoMe) {
             Webda.ajax.url = Webda.url('auth/me');
@@ -87,7 +99,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             });
           }
         },
-        setUrl: function(url) {
+        _setUrl: function(url) {
           Webda.setUrl(this.url);
         }
       });

@@ -1,0 +1,47 @@
+<!doctype html>
+
+<html>
+  <head>
+    <title>webda-webcomponents test</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../webda-auth-email-panel.html">
+  </head>
+  <body>
+    <webda-core></webda-core>
+    <test-fixture id="basic">
+      <template>
+        <webda-auth-email-panel></webda-auth-email-panel>
+      </template>
+    </test-fixture>
+
+    <script>
+      suite('webda-webcomponents', function() {
+        var server;
+        setup(function() {
+          server = sinon.fakeServer.create();
+          server.respondWith('POST', '/auth/email', [404,'','']);
+        });
+        teardown( function() {
+          server.restore();
+        });
+        test('instantiating the element works', function() {
+          let element = fixture('basic');
+          assert.equal(element.is, 'webda-auth-email-panel');
+        });
+        test('test login with registration', function() {
+          let element = fixture('basic');
+          let dlg = element.$$('paper-dialog');
+          assert.equal(dlg.opened, false);
+          element.$$('paper-button').click();
+          server.respond();
+          // Not yet ready
+        });
+
+      });
+    </script>
+  </body>
+</html>

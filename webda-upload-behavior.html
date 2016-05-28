@@ -1,30 +1,58 @@
 <link rel="import" href="webda-core.html">
-<script src="../../bower_components/js-md5/build/md5.min.js"></script>
+<script src="../js-md5/build/md5.min.js"></script>
 <script>
-UploadBehavior = {
+/**
+ * Handles the upload to a Binary
+ *
+ * It handles for you, the two steps upload to Webda.io API
+ * The upload is based on a prior challenge base on MD5 on the content and a challenge MD5('WEBDA'+filebinary)
+ * So if the file is already on the server you don't have to reupload it again
+ * @polymerBehavior
+ */
+Webda.Behaviors.Upload = {
 	properties: {
+		/**
+		 * Binary service name
+		 */
 		store: {
             type: String,
             value: 'binary'
         },
+        /**
+         * Path for post
+         *
+         * Should be : objectStore/objectUid/objectProperty/index
+         *
+         * index is add for new file
+         *
+         * Example: tasks/efe449ab-5e0d-4f3c-97e2-b43d9fc50a85/images/add
+         */
         path: {
-          	type: String,
-          	value: 'tasks/efe449ab-5e0d-4f3c-97e2-b43d9fc50a85/images/add'
+          	type: String
         },
+        /**
+         * Filename of the selected file
+         */
         filename: {
           	type: String,
           	notify: true
         },
+        /**
+         * If true upload as soon as a file is selected
+         */
         autoupload: {
         	type: Boolean,
         	value: false
         },
+        /**
+         * File content in base64 to use inside a img tag, for preview
+         */
         b64content: {
         	type: String,
         	notify: true
         }
 	},
-	computeFile: function(evt) {
+	_computeFile: function(evt) {
     	this.loading = true;
 		var files = evt.target.files;
 		this.filename = files[0].name;
@@ -58,6 +86,9 @@ UploadBehavior = {
 		}
 		return false;
 	},
+	/**
+	 * Launch the upload of the selected file
+	 */
 	upload: function() {
 		if (this.hashPromise === undefined) {
 			throw Error("Please select a file");
@@ -90,5 +121,4 @@ UploadBehavior = {
         });
 	}
 }
-Webda.Behaviors.Upload = UploadBehavior;
 </script>
