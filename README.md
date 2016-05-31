@@ -1,6 +1,6 @@
 ![](http://webda.io/images/touch/icon-128x128.png)
 
-# \<webda-webcomponents\>
+# \<webda-core\>
 
 Basic components for [Webda.io](http://github.com/loopingz/webda.git) framework
 
