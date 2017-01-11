@@ -55,6 +55,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   WebdaController.prototype.me = function() {
     Webda.ajax.url = Webda.url('auth/me');
+    Webda.ajax.method = 'GET';
     return Webda.ajax.generateRequest().completes;
   }
 
