@@ -53,6 +53,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     return this._url + page;
   };
 
+  WebdaController.prototype.me = function() {
+    Webda.ajax.url = Webda.url('auth/me');
+    return Webda.ajax.generateRequest().completes;
+  }
+
   window.Webda = window.Webda || new WebdaController();
 
   Webda.Behaviors = {};
@@ -90,8 +95,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           console.log("Webda is ready", Webda.ajax, Webda.ajaxAnon);
           Webda.setUrl(this.url);
           if (this.autoMe) {
-            Webda.ajax.url = Webda.url('auth/me');
-            Webda.ajax.generateRequest().completes.then( (req) => {
+            Webda.me().then( (req) => {
               let user = req.response;
               Webda.user = user;
               this.autoMe = user;
