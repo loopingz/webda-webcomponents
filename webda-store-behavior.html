@@ -50,11 +50,11 @@
             }
             Webda.ajax.contentType = 'application/json';
             Webda.ajax.body = this.model;
-            return Webda.ajax.generateRequest().completes.then((req) => {
+            return Webda.ajax.generateRequest().completes.then(function(req) {
                   this.model = req.response;
                   this.fire(event, this.model);
                   return Promise.resolve(this.model);
-            });
+            }.bind(this));
       },
 
       ready: function() {
@@ -69,10 +69,10 @@
             if (this.store === undefined || this.uuid === undefined || this._promise) return;
             Webda.ajax.method = 'GET';
             Webda.ajax.url = Webda.url(this.store.toLowerCase() + '/' + this.uuid);
-            this._promise = Webda.ajax.generateRequest().completes.then((req) => {
+            this._promise = Webda.ajax.generateRequest().completes.then(function(req) {
                   this.model = req.response;
                   this._promise = undefined;
-            });
+            }.bind(this));
             return this._promise;
       },
       
@@ -88,9 +88,9 @@
             if (uuid === undefined) return;
             Webda.ajax.method = 'DELETE';
             Webda.ajax.url = Webda.url(this.store.toLowerCase() + '/' + uuid);
-            return Webda.ajax.generateRequest().completes.then(() => {
+            return Webda.ajax.generateRequest().completes.then(function() {
                   this.fire('Webda.Store.Delete', this.model);
-            });
+            }.bind(this));
       }
     };
 

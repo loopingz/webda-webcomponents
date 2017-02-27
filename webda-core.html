@@ -44,7 +44,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }
     Webda.ajax.method = 'DELETE';
     Webda.ajax.url = Webda.url(url);
-    return Webda.ajax.generateRequest().completes.then(() => {
+    return Webda.ajax.generateRequest().completes.then(function() {
         app.fire('Webda.Logout');
     });
   };
@@ -96,12 +96,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           console.log("Webda is ready", Webda.ajax, Webda.ajaxAnon);
           Webda.setUrl(this.url);
           if (this.autoMe) {
-            Webda.me().then( (req) => {
+            Webda.me().then( function(req) {
               let user = req.response;
               Webda.user = user;
               this.autoMe = user;
               this.fire("Webda.AutoLogin", user);
-            });
+            }.bind(this));
           }
         },
         _setUrl: function(url) {

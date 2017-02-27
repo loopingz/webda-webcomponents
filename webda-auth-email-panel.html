@@ -36,10 +36,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
     <div>
-      <paper-input class="short" label="Enter your email here" value={{email}} auto-validate pattern="[a-zA-Z0-9]+@[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}">
+      <paper-input id="email" class="short" label="Enter your email here" value={{email}} auto-validate pattern="[[emailRule]]">
         <iron-icon icon="mail" prefix></iron-icon>
       </paper-input>
-      <paper-input label="Enter your password here" value="{{password}}" type="password" auto-validate pattern=".{8,}">
+      <paper-input id="password" label="Enter your password here" value="{{password}}" type="password" auto-validate pattern="[[passwordRule]]">
         <iron-icon icon="lock" prefix></iron-icon>
       </paper-input>
       <span class="error">[[lastError]]</span>
@@ -75,15 +75,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           handleRegister: {
             type: Boolean,
             value: false
+          },
+          passwordRule: {
+            type: String,
+            value: '.{8,}'
+          },
+          emailRule: {
+            type: String,
+            value: '[a-zA-Z0-9]+@[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}'
           }
         },
         _registerAction: function() {
-          this.register(this.email, this.password, {}).then( () => {
-
-          });
+          this.register(this.email, this.password, {});
         },
         _login: function() {
-          this.login(this.email, this.password).catch((err) => {
+          this.login(this.email, this.password).catch(function(err) {
             if (err == 403) {
               this.lastError = "Incorrect password";
             } else if (err == 404) {
@@ -95,7 +101,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             } else {
               this.lastError = "Unknown error occured";
             }
-          });
+          }.bind(this));
         }
       });
     })();

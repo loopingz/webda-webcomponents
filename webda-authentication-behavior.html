@@ -41,7 +41,7 @@
   	    Webda.ajax.body = {'login': login, 'password': password};
   	    Webda.ajax.url = Webda.url(this.url + '/email');
   	    var req = Webda.ajax.generateRequest();
-  	    return req.completes.then(() => {
+  	    return req.completes.then(function() {
   	      	app.fire('Webda.Login');
   	      	return Promise.resolve();
   	    }).catch(function (err) {
@@ -64,7 +64,7 @@
           Webda.ajax.body = infos;
           Webda.ajax.url = Webda.url(this.url + '/email');
           var req = Webda.ajax.generateRequest();
-          return req.completes.then(() => {
+          return req.completes.then(function() {
             app.fire('Webda.Login');
             return Promise.resolve();
           }).catch(function (err) {
@@ -99,9 +99,9 @@
       _loadProviders: function() {
       	Webda.ajax.method = 'GET';
       	Webda.ajax.url = Webda.url(this.url);
-  	    Webda.ajax.generateRequest().completes.then((res) => {
+  	    Webda.ajax.generateRequest().completes.then(function(res) {
   	      	this.providers = Webda.ajax.lastResponse;
-  	    });
+  	    }.bind(this));
       },
 
       /** 
