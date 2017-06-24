@@ -115,7 +115,9 @@ Webda.Behaviors.Upload = {
           			return Webda.ajaxAnon.generateRequest().completes.then( function() {
           				this.fire("Webda.Upload");
           			}.bind(this));
-          		}
+          		} else {
+                this.fire("Webda.Upload");
+              }
           		// File was already on server, the adding has been done
           		return Promise.resolve();
           	}.bind(this));
