@@ -71,7 +71,7 @@ Webda.Behaviors.Upload = {
 		    	resolve();
 			}.bind(this);
 			reader.readAsArrayBuffer(files[0]);
-			if (this.b64content) {
+			if (this.b64content !== undefined) {
 				// Would prefer to optimise with the other reader
 				var b64reader = new FileReader();
 				b64reader.onload = function(event) {
